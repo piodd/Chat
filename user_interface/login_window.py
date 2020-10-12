@@ -51,6 +51,6 @@ class LoginWindow:
         rsa = RSA(public_power, private_key, public_mod)
         print(gen_keys)
         # first number is 0/1 and that means safe mode on/off next number is public power and public mod(public keys )
-        self.setting.user_name = "1-"+ self.text_to_send.get()
+        self.setting.user_name = "1-" + self.text_to_send.get()
         self.setting.set_RSA(rsa=rsa)
         self.window.destroy()

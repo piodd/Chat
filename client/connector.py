@@ -104,8 +104,6 @@ class Connector:
         # print("w send safe====", code)
         public_power = self.dic_of_key[user][0]
         mod = self.dic_of_key[user][1]
-        print("temp_rsa", public_power, "  ", mod)
-        print("moje rsa", self.rsa.public_key_power, "   ", self.rsa.mod)
         temp_rsa = RSA(public_power, 1, mod)
         for x in code:
             list_rsa.append(temp_rsa.encryption(x))
@@ -118,12 +116,10 @@ class Connector:
 
     def send_key(self, user):
         keys = "[" + str(self.rsa.public_key_power) + "," + str(self.rsa.mod) + "]"
-        print("w send keys== ", keys)
         self.client.send("-3-" + user + "-" + self.window.user_name + keys)
 
     def send_ask_for_key(self, user):
         if user in self.dic_of_key:
             pass
         else:
-            print("prosba o klucz to ====", "-4-" + user + "-" + self.window.user_name)
             self.client.send("-4-" + user + "-" + self.window.user_name)

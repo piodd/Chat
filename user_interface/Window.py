@@ -14,8 +14,16 @@ class Window:
         self.frame.grid(row=0, column=0, columnspan=2, rowspan=3, padx=200, pady=200)
         self.chat_text = tk.Text(master=self.frame)
         self.chat_text.insert(tk.INSERT, "WELCOME: " + setting.user_name + "\n")
+        self.chat_text.config(state=tk.DISABLED)
         self.chat_text.pack()
 
+        # conf tag
+        self.chat_text.tag_configure('myself',
+                                     foreground='#476042',
+                                     font=('Tempus Sans ITC', 12, 'bold'))
+        self.chat_text.tag_configure('someone',
+                                     foreground='red',
+                                     font=('Tempus Sans ITC', 12, 'bold'))
         # enter box to send
 
         self.frame.grid(row=3, column=1)
@@ -60,7 +68,11 @@ class Window:
         self.connector.say_hello()
 
     def set_choose_user(self):
-        self.chosen_user = self.text_chosen.get()
+        text = self.text_chosen.get()
+        if text[0] == '1':
+            self.chosen_user = text
+        else:
+            self.chosen_user = "1-" + text
         self.connector.send_ask_for_key(self.chosen_user)
 
     def run(self):
@@ -85,4 +97,16 @@ class Window:
 
     def add_message(self, message: str):
         self.message_list.append(message)
-        self.chat_text.insert(tk.INSERT, message + "\n")
+        self.chat_text.configure(state=tk.NORMAL)
+        if self.its_me(message):
+            self.chat_text.insert(tk.END, message + "\n", 'myself')
+        else:
+            self.chat_text.insert(tk.END, message + "\n", 'someone')
+
+        self.chat_text.config(state=tk.DISABLED)
+
+    def its_me(self, message: str):
+        temp = message.split(" : ")
+        print(temp, " username ", self.user_name)
+        print("temp===self", temp[0] == self.user_name)
+        return temp[0] == self.user_name or temp[0] == ">" + self.user_name

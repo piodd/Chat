@@ -55,14 +55,28 @@ class Coder:
                 packed_code_list.append(long_block)
                 counter = 0
                 long_block = ""
+        to_cut = 4 - counter
+        print("to cut ==", to_cut)
+        last_block = ""
         if long_block != "":
+            if to_cut == 3:
+                last_block = "01000011"
+            elif to_cut == 2:
+                last_block = "01000010"
+            elif to_cut == 1:
+                last_block = "01000001"
+        elif to_cut == 4:
+            for x in range(5):
+                long_block += "01000100"
+        if to_cut != 4:
             for x in range(4 - counter):
-                long_block += "11111111"
-            packed_code_list.append(long_block)
+                long_block += last_block
+        packed_code_list.append(long_block)
         return packed_code_list
 
     def bin_to_int(self, bin_code):
         int_list = []
+        print(bin_code)
         for x in bin_code:
             int_list.append(int(x, 2))
         return int_list
@@ -84,6 +98,7 @@ class Coder:
         short_bin_list.pop(0)
         non_random_short_bin_list = []
         block_str = ""
+        to_cut = 0
         for block in short_bin_list:
             for x in range(len(block)):
                 if random_code[x] == '1':
@@ -98,11 +113,23 @@ class Coder:
                         block_str += '0'
             non_random_short_bin_list.append(block_str)
             block_str = ""
+        last_block = short_bin_list[len(short_bin_list)-1]
+        print("last block ==", last_block)
+        if last_block == "01000011":
+            to_cut = 3
+        elif last_block == "01000010":
+            to_cut = 2
+        elif last_block == "01000001":
+            to_cut = 1
+        elif "01000100":
+            to_cut = 4
         for x in non_random_short_bin_list:
             char_list.append(chr(int(x, 2)))
         message = ""
         for x in char_list:
             message += x
+        print("to cut tuż przed napisanie wiadomosci ", to_cut)
+        message = message[:-(to_cut)]
         return message
 
     def code_for_RSA(self, message):
