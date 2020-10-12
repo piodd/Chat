@@ -1,0 +1,48 @@
+chat z możliwością przesyłu zaszyfrowanych wiadomości
+
+do przetestowania kodu należy
+uruchomić server
+nastepnie mozna uruchomić kilka okienek chatu plikami 
+starter_1 ,starter_2 
+
+2 tryby w jednym chat room z przesyłem jawnych informacji (zwykły "tradycyjny" chat room ) , w drugim pszesyłanie zaszyfrowanych informacji do wybranej osoby .
+
+
+logowanie:
+wpisujemy nazwe której bedziemy używać na chacie:
+dopisek 0- tworzy sie automatycznie i oznacza że jesteśmy w trybie bez szyfrowania 
+	1- w trybie szyfrowania
+LOG IN - tryb bez szyfrowania
+LOG IN SAFE MODE -tryb z szyfrowaniem (żadko ale czasem bywa że wystepuje bład którego jeszcze nie obsłużyłem wynika on z dośc naiwnego sposobu szukania dzielników przy tworzenia 2 cześci 																klucza,wtedy należy zatrzymać program i uruchomić ponownie)
+
+Przyciski:
+SEND - wysyła wiadomość  w trybie safe zaszyfrowaną kluczem publicznym do adresata .
+Chose user - ustawia do kogo bedziemy wysyłać wiadomości (wpisujemy "1-nick")
+say hello - pokazuje wszystkim użytkowniką że jesteśmy,pozwala poznać innym nasz nick i w ten sposób poprosić o klucz publiczny(jeśli ktoś zna nasz nick z innego źródła nie jest to konieczne) a 									nastepnie wysłać do nas wiadomośc.(wymiana kluczy nastepuje po wybraniu użykownika do którego chcemy wysłąć wiadomośc w sposób 																						automatyczny )
+ 
+
+
+
+Krótki opis sposobu działania:
+
+W programie zaimplementowałem własne proste kodowanie umożliwiające zamiane tekstu (tylko znaki ASCI ) na liczby . Taka forma jest konieczna do szyfrowania 
+
+Szyfowanie odbywywa się za pomocą zaimplementowanego przezemnie algorytmu asymetrycznego RSA .
+Jest to szyfrowanie z kluczem publicznym oraz prywatnym 
+w momecie logowania się w trybie safe nastepuje stworzenie klucza publicznego oraz prywatnego . 
+
+kiedy chcemy przesłąć do kogoś zaszyfrowaną wiadomość wysyłamy do niego prośbe (kanałem jawnym ) o to aby przesłął nam swój klucz publiczny 
+nastepnie przy użyciu tego klucza szyfrujemy wiadomość którą mu przesyłamy.Nastepnie on za pomocą swojego klucza prywatnego odszyfrowuje wiadomość. 
+
+schemat działania 
+
+wiadomość która wysyłamy -> Coder koduje wiadomość -> RSA szyfruje wiadomość -> druga osoba odbiera zaszyfrowana wiadomość -> RSA odszyfrowuje wiadomość -> Coder dekotuje wiadomość .
+
+
+zdobycie klucza 
+wysłanie zapytania o klucz -> odebranie zapytania ->wysłanie klucza -> odebranie i zapisanie klucza 
+
+Wadą zaimplementowanego kodowania jest to że w zdekodowanej wiadomości mogą pojawić się losowe znaki na jej końcu (max 3) . Wynika to z tego że kodowanie jest blokowe i "sklejane po 4" a więc jeśli brakuje nam bloków do wielokrotności 4 to są tworzone losowe bloki do wypełnienia . (można by to roziwązać aby był blok który informuje ile ostatnich bloków należy "odciąć" ) 
+
+Kodowanie nie jest też w pełni deterministyczna .Gdyż przed przy każdym kodowaniu zostaje wylosowane 7 bitów (gdyż 1 bit zawsze =1) które służa do kondowania dalszych wiadomośći ( bity są wysyłane wraz z zaszyfrowaną wiadomością ).Takie rozwiązanie sprawia że 2 identyczne wiadomości mogą być zakodowane na 2^7 sposobów. (tym samym szyfrogram tej samej wiadomości może byc różny).
+
